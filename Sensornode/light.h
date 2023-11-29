@@ -1,5 +1,5 @@
-#ifndef LIGHT
-#define LIGHT
+#ifndef LIGHT_HEADER
+#define LIGHT_HEADER
 
 #include "esp32-hal-adc.h"
 #include "global.h"

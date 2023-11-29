@@ -25,51 +25,28 @@ void setup_lcd() {
   lcd.backlight();
 }
 
-void print_lcd(message msg) {
+void print_lcd() {
   lcd.clear();
 
   lcd.setCursor(0, 0);
 
   lcd.print("T:");
-  if (msg.temp > 1000) {
+  if (temp_value > 1000) {
     lcd.print("ERR");
   } else {
-    lcd.print(msg.temp);
+    lcd.print(temp_value);
   }
-
-  lcd.setCursor(5, 0);
-
+  lcd.setCursor(7, 0);
   lcd.print(" H:");
-  if (msg.humi > 1000) {
+  if (humi_value > 1000) {
     lcd.print("ERR");
   } else {
-    lcd.print(msg.humi);
+    lcd.print(humi_value);
   }
-  // lcd.print(" W:");
-  // if (distance_value <= maxCapacity) {
-  //   uint8_t tmp = (uint8_t)floor((distance_value*100/maxCapacity)/17)+1;
-    
-  //   Serial.print("index: ");
-  //   Serial.println(tmp);
-
-  //   for (int i=6; i>=1; i--) {
-  //     if (i<=tmp) {
-  //       customChar[i] = 0x11;
-  //     } else {
-  //       customChar[i] = 0x1F;
-  //     }
-  //   }
-  //   lcd.createChar(0, customChar);
-  //   lcd.setCursor(14, 0); 
-  //   lcd.write(0);
-  // }
-
   lcd.setCursor(0,1);
   lcd.print("S:");
-  lcd.print(msg.soil);
-  lcd.setCursor(5, 1);
+  lcd.print(soil_value);
+  lcd.setCursor(7, 1);
   lcd.print(" L:");
-  lcd.print(msg.light);
-
-  delay(500);
+  lcd.print(light_value);
 }

@@ -1,5 +1,5 @@
-#ifndef TEMP_HUMI
-#define TEMP_HUMI
+#ifndef TEMP_HUMI_HEADER
+#define TEMP_HUMI_HEADER
 
 #include "DHT.h"
 #include "global.h"

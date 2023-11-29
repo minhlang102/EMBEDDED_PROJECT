@@ -1,5 +1,5 @@
-#ifndef RGB
-#define RGB
+#ifndef RGB_HEADER
+#define RGB_HEADER
 
 #include "global.h"
 #include "esp32-hal-gpio.h"
