@@ -13,7 +13,7 @@ def getPort():
     for i in range(0, N):
         port = ports[i]
         strPort = str(port)
-        print(strPort)
+        # print(strPort)
         if "CP210" in strPort:
             splitPort = strPort.split(" ")
             commPort = (splitPort[0])
