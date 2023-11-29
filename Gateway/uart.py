@@ -10,14 +10,14 @@ def getPort():
     ports = serial.tools.list_ports.comports()
     N = len(ports)
     commPort = "None"
-    # for i in range(0, N):
-    #     port = ports[i]
-    #     strPort = str(port)
-    #     print(strPort)
-    #     if "CP210" in strPort:
-    #         splitPort = strPort.split(" ")
-    #         commPort = (splitPort[0])
-    #         return commPort
+    for i in range(0, N):
+        port = ports[i]
+        strPort = str(port)
+        print(strPort)
+        if "CP210" in strPort:
+            splitPort = strPort.split(" ")
+            commPort = (splitPort[0])
+            return commPort
     return "COM9"
 
 def connectSerial():
