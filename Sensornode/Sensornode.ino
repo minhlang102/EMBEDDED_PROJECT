@@ -17,13 +17,16 @@
 #include "freertos/queue.h"
 #include <HardwareSerial.h>
 
+#define DELAY_TO_SAMPLING_TEMP  30000
+#define DELAY_TO_SAMPLING_HUMI  30000
+#define DELAY_TO_SAMPLING_LIGHT 30000
+#define DELAY_TO_SAMPLING_SOIL  30000
 
 uint8_t pump = 0;
 unsigned long previousMillis = 0UL;
 unsigned long interval = 700UL;
 
 QueueHandle_t dataQueue;
-QueueHandle_t lcdQueue;
 
 HardwareSerial SerialPort(2);
 
@@ -32,7 +35,6 @@ void setup()
   begin_temp_humi();
   setup_lcd();
 
-  lcdQueue = xQueueCreate(8, sizeof(sensor_data));
   dataQueue = xQueueCreate(30, sizeof(sensor_data));
 
   xTaskCreatePinnedToCore(control_led, "control_led", 4098, NULL, 10, NULL, 0);
@@ -66,9 +68,7 @@ void temp_sampling(void* arg) {
     temp_value = get_temp();
     data.value = temp_value;
     xQueueSendToBack(dataQueue, &data, (TickType_t)10);
-    // xQueueSendToBack(lcdQueue, &data, (TickType_t)10);
-    // Serial.println("Done reading temp");
-    vTaskDelay(pdMS_TO_TICKS(2000));
+    vTaskDelay(pdMS_TO_TICKS(DELAY_TO_SAMPLING_TEMP));
   }
 }
 
@@ -79,9 +79,7 @@ void humi_sampling(void* arg) {
     humi_value = get_humi();
     data.value = humi_value;
     xQueueSendToBack(dataQueue, &data, (TickType_t)10);
-    xQueueSendToBack(lcdQueue, &data, (TickType_t)10);
-    // Serial.println("Done reading humi");
-    vTaskDelay(pdMS_TO_TICKS(2000));
+    vTaskDelay(pdMS_TO_TICKS(DELAY_TO_SAMPLING_HUMI));
   }
 }
 
@@ -92,9 +90,7 @@ void light_sampling(void* arg) {
     light_value = get_light();
     data.value = light_value;
     xQueueSendToBack(dataQueue, &data, (TickType_t)10);
-    xQueueSendToBack(lcdQueue, &data, (TickType_t)10);
-    // Serial.println("Done reading light");
-    vTaskDelay(pdMS_TO_TICKS(2000));
+    vTaskDelay(pdMS_TO_TICKS(DELAY_TO_SAMPLING_LIGHT));
   }
 }
 
@@ -105,9 +101,7 @@ void soil_sampling(void* arg) {
     soil_value = get_moisture_soil();
     data.value = soil_value;
     xQueueSendToBack(dataQueue, &data, (TickType_t)10);
-    xQueueSendToBack(lcdQueue, &data, (TickType_t)10);
-    // Serial.println("Done reading soil");
-    vTaskDelay(pdMS_TO_TICKS(2000));
+    vTaskDelay(pdMS_TO_TICKS(DELAY_TO_SAMPLING_SOIL));
   }
 }
 
@@ -144,7 +138,7 @@ void send_to_gateway(void* arg) {
         default:
           break;
       }
-      SerialPort.print(buffer);
+      // SerialPort.print(buffer);
       vTaskDelay(pdMS_TO_TICKS(100));
     }
   }
@@ -157,7 +151,7 @@ void render_lcd(void* arg) {
   }
 }
 
-void control_led(void* arg) {
+void control_led_pump(void* arg) {
   uint8_t buffer[100];
   uint8_t id;
   uint8_t name[20];
@@ -165,16 +159,24 @@ void control_led(void* arg) {
   uint8_t i = 0;
   while (1) {
     if (SerialPort.read() == '!') {
-      for (int i=0; i<100; i++) {
-        if (buffer[i] == '#')
+      buffer[0] = '!';
+      digitalWrite(led_pin, !digitalRead(led_pin));    
+      for (i=1; i<100; i++) {
+        if (buffer[i] == '#') {
+          buffer[i] = '#';
+          buffer[i+1] = '\0';
           break;
+        }
         buffer[i] = SerialPort.read();
-        Serial.println((char)buffer[i]);
       }
+      sscanf((const char *)buffer, "!%d:%[^:]:%d#", &id, name, &value);
+      SerialPort.write(buffer, 20);
+      // if (strcmp((const char*) name, "button1")==0) {
+      //   digitalWrite(led_pin, value);
+      // } else if (strcmp((const char*) name, "button2")==0) {
+      //   digitalWrite(pump_pin, value);
+      // }
     }
-    Serial.println("Serial");
-    // sscanf((const char *)buffer, "!%d:%[^:]:%d#", &id, name, &value);
-    // digitalWrite(pump_pin, value);
-    vTaskDelay(pdMS_TO_TICKS(500));
+    vTaskDelay(pdMS_TO_TICKS(100));
   }
 }

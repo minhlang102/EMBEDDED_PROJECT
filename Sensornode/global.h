@@ -11,7 +11,7 @@
 #define rgb_R_pin             27
 #define rgb_G_pin             26
 #define rgb_B_pin             25
-#define led                   2
+#define led_pin               2
 #define lcd_scl_pin           22
 #define lcd_sda_pin           21
 #define pump_pin              4
@@ -30,14 +30,6 @@ extern int humi_value;
 extern int distance_value;
 extern int soil_value;
 extern int light_value;
-
-typedef struct message_t {
-    uint8_t id;
-    uint16_t temp;
-    uint16_t humi;
-    uint16_t soil;
-    uint16_t light;
-} message;
 
 typedef struct sensor_data_t {
     uint8_t id;
