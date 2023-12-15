@@ -1,5 +1,5 @@
 #include "light.h"
 
 int get_light() {
-  return analogRead(light_pin);
+  return map(analogRead(light_pin), 0, 4049, 50, 500);
 }

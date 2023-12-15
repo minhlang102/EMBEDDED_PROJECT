@@ -28,7 +28,7 @@ void setup_lcd() {
 void print_lcd() {
   lcd.clear();
 
-  lcd.setCursor(0, 0);
+  lcd.setCursor(1, 0);
 
   lcd.print("T:");
   if (temp_value > 1000) {
@@ -43,10 +43,7 @@ void print_lcd() {
   } else {
     lcd.print(humi_value);
   }
-  lcd.setCursor(0,1);
-  lcd.print("S:");
-  lcd.print(soil_value);
-  lcd.setCursor(7, 1);
+  lcd.setCursor(0, 1);
   lcd.print(" L:");
   lcd.print(light_value);
 }

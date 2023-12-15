@@ -10,20 +10,20 @@ def getPort():
     ports = serial.tools.list_ports.comports()
     N = len(ports)
     commPort = "None"
-    for i in range(0, N):
-        port = ports[i]
-        strPort = str(port)
-        # print(strPort)
-        if "CP210" in strPort:
-            splitPort = strPort.split(" ")
-            commPort = (splitPort[0])
-            return commPort
-    return "COM9"
+    # for i in range(0, N):
+    #     port = ports[i]
+    #     strPort = str(port)
+    #     # print(strPort)
+    #     if "CP210" in strPort:
+    #         splitPort = strPort.split(" ")
+    #         commPort = (splitPort[0])
+    #         return commPort
+    return "COM11"
 
 def connectSerial():
     try:
         global ser
-        ser = serial.Serial( port=getPort(), baudrate=9600)
+        ser = serial.Serial( port=getPort(), baudrate=115200)
         print("Serial: ",ser)
         extern.serial_flag = 0
     except:
@@ -75,12 +75,11 @@ def readSerial():
                 mess = mess[end+1:]
 
 def writeSerial(commandToSend):
-    for ch in commandToSend:
-        try:
-            ser.write(str(ch).encode("UTF-8"))
-        except:
-            print("Write Serial fail")
-            connectSerial()
-            pass
-        time.sleep(0.2)
+    try:
+        ser.write(str(commandToSend).encode("UTF-8"))
+    except:
+        print("Write Serial fail")
+        connectSerial()
+        pass
+    time.sleep(0.2)
 
